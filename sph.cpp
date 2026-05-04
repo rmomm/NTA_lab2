@@ -15,8 +15,25 @@ long long mod_pow(long long a, long long b, long long mod) {
     return r;
 }
 
+long long extgcd(long long a, long long b, long long& x, long long& y) {
+    if (a == 0) {
+        x = 0; y = 1;
+        return b;
+    }
+    long long x1, y1;
+    long long gcd = extgcd(b % a, a, x1, y1);
+    x = y1 - (b / a) * x1;
+    y = x1;
+    return gcd;
+}
+
 long long mod_inv(long long a, long long mod) {
-    return mod_pow(a, mod - 2, mod);
+    long long x, y;
+    long long g = extgcd(a, mod, x, y);
+    if (g != 1) { 
+        return -1; 
+    }
+    return (x % mod + mod) % mod;
 }
 
 
@@ -54,7 +71,8 @@ vector<pair<long long, long long>> factorize(long long n) {
 
 long long crt(vector<long long> r, vector<long long> m) {
     long long M = 1;
-    for (auto x : m) M *= x;
+    for (auto x : m) 
+        M *= x;
 
     long long x = 0;
 
@@ -72,13 +90,12 @@ long long spp(long long a, long long b, long long p, long long r, long long l, l
 
     long long x = 0;
     long long cur_b = b;
-
     long long p_k = 1;
 
     for (int k = 0; k < l; k++) {
-        long long exp = n / (p_k * r);
 
-        long long step = mod_pow(a, n / r, p);
+        long long exp = n / (p_k * r);
+        long long step = mod_pow(a, n / (p_k * r), p);
 
         vector<long long> table(r);
         table[0] = 1;
@@ -101,11 +118,13 @@ long long spp(long long a, long long b, long long p, long long r, long long l, l
         x += x_i * p_k;
 
         long long dec = mod_pow(a, x_i * p_k, p);
-        long long inv = mod_inv(dec, p);
-
-        cur_b = (cur_b * inv) % p;
+        cur_b = (cur_b * mod_inv(dec, p)) % p;
 
         p_k *= r;
+    }
+
+    if (mod_pow(a, x, p) != b) {
+        return brute_force(a, b, p);
     }
 
     return x;
@@ -137,3 +156,4 @@ long long sph(long long a, long long b, long long p) {
 
     return crt(res, mod);
 }
+

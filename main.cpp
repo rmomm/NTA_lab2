@@ -32,20 +32,16 @@ int main() {
 
         if (choice == 1) {
 
-            long long p, a, b;
+            long long  a, b, p;
 
             cout << "Enter p a b:\n";
-            cin >> p >> a >> b;
+            cin >> a >> b >> p;
 
             cout << "\n--- BRUTE FORCE ---\n";
-            run([&]() {
-                return brute_force(a, b, p);
-                });
+            run([&]() { return brute_force(a, b, p); });
 
             cout << "\n--- SPH ---\n";
-            run([&]() {
-                return sph(a, b, p);
-                });
+            run([&]() { return sph(a, b, p); });
 
         }
         else {

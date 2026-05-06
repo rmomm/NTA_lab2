@@ -109,16 +109,16 @@ long long spp(long long a, long long b, long long p, long long r, long long l, l
 
     long long step = mod_pow(a, n / r, p);
 
+    vector<long long> table(r);
+    table[0] = 1;
+
+    for (long long j = 1; j < r; j++) {
+        table[j] = (table[j - 1] * step) % p;
+    }
+
     for (int k = 0; k < l; k++) {
 
         long long exp = n / (p_k * r);
-
-        vector<long long> table(r);
-        table[0] = 1;
-
-        for (long long j = 1; j < r; j++) {
-            table[j] = (table[j - 1] * step) % p;
-        }
 
         long long left = mod_pow(cur_b, exp, p);
 

@@ -30,18 +30,18 @@ long long extgcd(long long a, long long b, long long& x, long long& y) {
 long long mod_inv(long long a, long long mod) {
     long long x, y;
     long long g = extgcd(a, mod, x, y);
-    if (g != 1) { 
-        return -1; 
-    }
+    if (g != 1) 
+        return -1;
+
     return (x % mod + mod) % mod;
 }
 
 
 int brute_force(long long a, long long b, long long p) {
     for (long long x = 0; x < p; x++) {
-        if (mod_pow(a, x, p) == b) {
-            return x; 
-        }
+        if (mod_pow(a, x, p) == b) 
+            return x;
+
     }
     return -1;
 }
@@ -61,17 +61,15 @@ vector<pair<long long, long long>> factorize(long long n) {
         }
     }
 
-    if (n > 1) {
+    if (n > 1) 
         f.push_back({ n, 1 });
-    }
-       
 
     return f;
 }
 
 long long crt(vector<long long> r, vector<long long> m) {
     long long M = 1;
-    for (auto x : m) 
+    for (auto x : m)
         M *= x;
 
     long long x = 0;
@@ -86,16 +84,34 @@ long long crt(vector<long long> r, vector<long long> m) {
     return (x + M) % M;
 }
 
+long long order(long long a, long long p) {
+    long long n = p - 1;
+    auto factors = factorize(n);
+
+    for (auto it : factors) {
+        long long prime = it.first;
+
+        while (n % prime == 0) {
+            if (mod_pow(a, n / prime, p) == 1)
+                n /= prime;
+            else
+                break;
+        }
+    }
+    return n;
+}
+
 long long spp(long long a, long long b, long long p, long long r, long long l, long long n) {
 
     long long x = 0;
     long long cur_b = b;
     long long p_k = 1;
 
+    long long step = mod_pow(a, n / r, p);
+
     for (int k = 0; k < l; k++) {
 
         long long exp = n / (p_k * r);
-        long long step = mod_pow(a, n / (p_k * r), p);
 
         vector<long long> table(r);
         table[0] = 1;
@@ -123,16 +139,13 @@ long long spp(long long a, long long b, long long p, long long r, long long l, l
         p_k *= r;
     }
 
-    if (mod_pow(a, x, p) != b) {
-        return brute_force(a, b, p);
-    }
 
     return x;
 }
 
 
 long long sph(long long a, long long b, long long p) {
-    long long n = p - 1;
+    long long n = order(a, p);
 
     auto factors = factorize(n);
 
@@ -144,9 +157,9 @@ long long sph(long long a, long long b, long long p) {
         long long l_i = it.second;
 
         long long m_i = 1;
-        for (int i = 0; i < l_i; i++) { 
-            m_i *= p_i; 
-        }
+        for (int i = 0; i < l_i; i++) 
+            m_i *= p_i;
+
 
         long long x_i = spp(a, b, p, p_i, l_i, n);
 
@@ -156,4 +169,3 @@ long long sph(long long a, long long b, long long p) {
 
     return crt(res, mod);
 }
-
